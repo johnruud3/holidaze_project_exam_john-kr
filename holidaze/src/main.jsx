@@ -1,10 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import LandingPage from "./landingpage/LandingPage";
 import { BrowserRouter } from "react-router-dom";
 import Header from "./components/Header";
 import AnimatedBackground from "./components/AnimatedBackground";
+import Footer from "./components/footer";
+import App from "./app.tsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -12,7 +13,8 @@ createRoot(document.getElementById("root")).render(
       <AnimatedBackground />
       <div className="relative z-10">
         <Header />
-        <LandingPage />
+        <App />
+        <Footer />
       </div>
     </BrowserRouter>
   </StrictMode>,
