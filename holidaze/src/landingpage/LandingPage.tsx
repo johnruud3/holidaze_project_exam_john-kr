@@ -139,7 +139,7 @@ const LandingPage = () => {
           {venues.map((venue) => (
             <div
               key={venue.id}
-              className="flex flex-col h-full rounded-lg bg-white shadow-lg cursor-pointer hover:shadow-xl transition-shadow transform hover:scale-101 "
+              className="flex flex-col h-full rounded-lg bg-white shadow-lg hover:shadow-xl transition-shadow transform hover:scale-101 "
             >
               <div className="relative">
                 <img
@@ -223,11 +223,11 @@ const LandingPage = () => {
                     Ratings: {renderStars(venue.rating)}
                   </p>
                 </div>
-                <div className="bg-slate-900 rounded-lg p-2">
-                  <button
-                    className="cursor-pointer text-white hover:scale-103"
-                    onClick={() => navigate(`/singlevenue/${venue.id}`)}
-                  >
+                <div
+                  onClick={() => navigate(`/singlevenue/${venue.id}`)}
+                  className="bg-slate-900 rounded-lg p-2 cursor-pointer"
+                >
+                  <button className="cursor-pointer text-white hover:scale-103">
                     Book Now!
                   </button>
                 </div>

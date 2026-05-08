@@ -8,7 +8,11 @@ const Footer = () => {
         <div className="grid gap-10 md:grid-cols-12 md:items-start">
           <div className="flex flex-row items-center md:col-span-5">
             <Link to="/" className="inline-flex items-center gap-3">
-              <img src={logo} alt="Holidaze logo" className="h-10 w-10" />
+              <img
+                src={logo}
+                alt="Holidaze logo"
+                className="h-10 w-10 border border-white rounded-xl"
+              />
               <div className="flex flex-col leading-tight">
                 <span className="text-sm font-semibold tracking-wide text-white">
                   Holidaze
@@ -72,7 +76,8 @@ const Footer = () => {
 
         <div className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-slate-400">
-            © {new Date().getFullYear()} Holidaze. All rights reserved.
+            © {new Date().getFullYear()} Holidaze. Created by John-Kristian G.
+            Ruud
           </p>
 
           <div className="flex items-center gap-4 text-xs text-slate-400">
