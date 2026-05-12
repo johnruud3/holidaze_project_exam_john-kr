@@ -1,5 +1,7 @@
 export type VenueMedia = { url: string; alt?: string };
 
+// all venues types
+
 export type Venue = {
   id: string;
   name: string;
@@ -27,6 +29,8 @@ export type Venue = {
   };
 };
 
+// Venues paginations/pages types
+
 export type VenuesPagination = {
   data: Venue[];
   meta: {
@@ -39,4 +43,3 @@ export type VenuesPagination = {
     totalCount: number;
   };
 };
-

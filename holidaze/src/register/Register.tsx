@@ -1,0 +1,165 @@
+import { useState } from "react";
+import type { SyntheticEvent } from "react";
+import type { RegisterUserT } from "../types/user";
+import { registerUserApi } from "../api/user";
+
+export default function Register() {
+  const [user, setUser] = useState<RegisterUserT>({
+    name: "",
+    email: "",
+    password: "",
+    bio: "",
+    venueManager: false,
+  });
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [tab, setTab] = useState<"user" | "manager">("user");
+
+  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      if (!user.name.trim()) {
+        setError("Name is required");
+        return;
+      }
+      if (!user.email.trim()) {
+        setError("Email is required");
+        return;
+      }
+      if (!user.password.trim()) {
+        setError("Password is required");
+        return;
+      }
+
+      const email = user.email.trim().toLowerCase();
+      if (!email.endsWith("@stud.noroff.no")) {
+        setError("Email must end with @stud.noroff.no");
+        return;
+      }
+
+      const response = await registerUserApi(user);
+      console.log(response);
+    } catch (error) {
+      setError(error as string);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <section className="min-h-screen bg-white">
+      <div className="px-4 py-8">
+        <h3 className="text-2xl font-bold text-slate-900 md:text-4xl">
+          Register
+        </h3>
+      </div>
+
+      <div className="mt-2 flex justify-center gap-2 px-4">
+        <button
+          type="button"
+          onClick={() => {
+            setTab("user");
+            setUser((u) => ({ ...u, venueManager: false }));
+          }}
+          className={`rounded-lg px-4 py-2 text-sm font-semibold cursor-pointer ${
+            tab === "user"
+              ? "bg-slate-900 text-white"
+              : "bg-slate-100 text-slate-700"
+          }`}
+        >
+          As user
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setTab("manager");
+            setUser((u) => ({ ...u, venueManager: true }));
+          }}
+          className={`rounded-lg px-4 py-2 text-sm font-semibold cursor-pointer ${
+            tab === "manager"
+              ? "bg-slate-900 text-white"
+              : "bg-slate-100 text-slate-700"
+          }`}
+        >
+          As venue manager
+        </button>
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="mx-auto mt-6 w-full max-w-xl space-y-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6"
+      >
+        {error && <p className="text-sm text-red-600">{error}</p>}
+
+        <div>
+          <label className="text-sm font-medium text-slate-700" htmlFor="name">
+            Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            value={user.name}
+            onChange={(e) => setUser({ ...user, name: e.target.value })}
+            className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-400"
+          />
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-slate-700" htmlFor="email">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={user.email}
+            onChange={(e) => setUser({ ...user, email: e.target.value })}
+            className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-400"
+          />
+        </div>
+
+        <div>
+          <label
+            className="text-sm font-medium text-slate-700"
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={user.password}
+            onChange={(e) => setUser({ ...user, password: e.target.value })}
+            className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-400"
+          />
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-slate-700" htmlFor="bio">
+            Bio <span className="text-slate-400">(optional)</span>
+          </label>
+          <textarea
+            id="bio"
+            value={user.bio}
+            onChange={(e) => setUser({ ...user, bio: e.target.value })}
+            className="mt-1 min-h-24 w-full resize-y rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-400"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60 cursor-pointer"
+        >
+          {loading
+            ? "Creating account…"
+            : tab === "manager"
+              ? "Register as venue manager"
+              : "Register as user"}
+        </button>
+      </form>
+    </section>
+  );
+}
