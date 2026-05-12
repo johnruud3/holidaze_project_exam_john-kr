@@ -1,9 +1,11 @@
 import { useState } from "react";
 import type { SyntheticEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import type { RegisterUserT } from "../types/user";
 import { registerUserApi } from "../api/user";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [user, setUser] = useState<RegisterUserT>({
     name: "",
     email: "",
@@ -32,6 +34,10 @@ export default function Register() {
         setError("Password is required");
         return;
       }
+      if (user.password.length < 8) {
+        setError("Password must be at least 8 characters");
+        return;
+      }
 
       const email = user.email.trim().toLowerCase();
       if (!email.endsWith("@stud.noroff.no")) {
@@ -39,10 +45,14 @@ export default function Register() {
         return;
       }
 
-      const response = await registerUserApi(user);
-      console.log(response);
+      await registerUserApi({ ...user, email });
+      navigate("/login", { state: { registered: true } });
     } catch (error) {
-      setError(error as string);
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again.";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -92,7 +102,11 @@ export default function Register() {
         onSubmit={handleSubmit}
         className="mx-auto mt-6 w-full max-w-xl space-y-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6"
       >
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && (
+          <p className="text-sm text-red-600" role="alert">
+            {error}
+          </p>
+        )}
 
         <div>
           <label className="text-sm font-medium text-slate-700" htmlFor="name">
@@ -159,6 +173,12 @@ export default function Register() {
               ? "Register as venue manager"
               : "Register as user"}
         </button>
+        <p className="mt-2 text-sm text-slate-600">
+          Already have an account?{" "}
+          <Link to="/login" className="font-medium text-slate-900 underline">
+            Log in
+          </Link>
+        </p>
       </form>
     </section>
   );

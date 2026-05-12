@@ -4,6 +4,8 @@ import type {
   LoginUserT,
   LoginResponse,
 } from "../types/user";
+import { messageFromFailedResponse } from "../types/apiErrors";
+
 const apiBase = import.meta.env.VITE_API_URL;
 
 // Register user api
@@ -21,7 +23,11 @@ export const registerUserApi = async (
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to register user: ${response.status}`);
+    const message = await messageFromFailedResponse(
+      response,
+      `Failed to register user: (${response.status}).`,
+    );
+    throw new Error(message);
   }
 
   const data = await response.json();
@@ -43,7 +49,11 @@ export const loginUserApi = async (
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to login user: ${response.status}`);
+    const message = await messageFromFailedResponse(
+      response,
+      `Failed to register user: (${response.status}). Check your email and password.`,
+    );
+    throw new Error(message);
   }
 
   const data = await response.json();
