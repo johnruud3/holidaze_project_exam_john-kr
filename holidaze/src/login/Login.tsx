@@ -1,13 +1,13 @@
 import { useState } from "react";
 import type { SyntheticEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import { loginUserApi } from "../api/user";
-
-const TOKEN_KEY = "holidaze_access_token";
 
 type LoginLocationState = { registered?: boolean };
 
 export default function Login() {
+  const { signIn, isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const fromRegister = Boolean(
@@ -17,6 +17,24 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  if (isLoggedIn) {
+    return (
+      <section className="min-h-screen bg-white">
+        <div className="px-4 py-8">
+          <h3 className="text-2xl font-bold text-slate-900 md:text-4xl">
+            Log in
+          </h3>
+        </div>
+        <div className="mx-auto mt-4 w-full max-w-xl space-y-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+          <p className="text-sm text-slate-700" role="status">
+            You are already signed in. You cannot sign in again until you log
+            out.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,7 +68,7 @@ export default function Login() {
         return;
       }
 
-      localStorage.setItem(TOKEN_KEY, token);
+      signIn(token);
       navigate("/");
     } catch (err) {
       const message =

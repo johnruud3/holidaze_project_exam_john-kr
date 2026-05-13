@@ -3,9 +3,11 @@ import type { SyntheticEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { RegisterUserT } from "../types/user";
 import { registerUserApi } from "../api/user";
+import { useAuth } from "../auth/AuthContext";
 
 export default function Register() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const [user, setUser] = useState<RegisterUserT>({
     name: "",
     email: "",
@@ -22,8 +24,19 @@ export default function Register() {
     setLoading(true);
     setError(null);
     try {
-      if (!user.name.trim()) {
+      const name = user.name.trim();
+      if (!name) {
         setError("Name is required");
+        return;
+      }
+      if (name.length > 20) {
+        setError("Name must be at most 20 characters.");
+        return;
+      }
+      if (!/^[a-zA-Z0-9_]+$/.test(name)) {
+        setError(
+          "Name may only use letters, numbers, and underscores (no spaces or punctuation).",
+        );
         return;
       }
       if (!user.email.trim()) {
@@ -45,18 +58,40 @@ export default function Register() {
         return;
       }
 
-      await registerUserApi({ ...user, email });
+      await registerUserApi({ ...user, name, email });
       navigate("/login", { state: { registered: true } });
     } catch (error) {
-      const message =
+      let message =
         error instanceof Error
           ? error.message
           : "Something went wrong. Please try again.";
+      if (message.includes("Profile already exists")) {
+        message +=
+          " Your profile name must be unique for the whole Noroff API (not just your email). Pick a different name, max 20 characters, letters/numbers/underscore only.";
+      }
       setError(message);
     } finally {
       setLoading(false);
     }
   };
+
+  if (isLoggedIn) {
+    return (
+      <section className="min-h-screen bg-white">
+        <div className="px-4 py-8">
+          <h3 className="text-2xl font-bold text-slate-900 md:text-4xl">
+            Register
+          </h3>
+        </div>
+        <div className="mx-auto mt-4 w-full max-w-xl space-y-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+          <p className="text-sm text-slate-700" role="status">
+            You are already signed in. Creating another account requires logging
+            out first.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="min-h-screen bg-white">
