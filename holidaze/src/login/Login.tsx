@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { SyntheticEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { getHolidazeProfile } from "../api/profiles";
 import { loginUserApi } from "../api/user";
 
 type LoginLocationState = { registered?: boolean };
@@ -68,7 +69,11 @@ export default function Login() {
         return;
       }
 
-      signIn(token);
+      const profileName = response.data.name?.trim() ?? "";
+      const profile = await getHolidazeProfile(profileName, token);
+      const isVenueManager = Boolean(profile.data.venueManager);
+
+      signIn(token, isVenueManager, profileName);
       navigate("/");
     } catch (err) {
       const message =

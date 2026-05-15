@@ -5,6 +5,7 @@ import type {
   LoginResponse,
 } from "../types/user";
 import { messageFromFailedResponse } from "../types/apiErrors";
+import { noroffHeaders } from "./noroffHeaders";
 
 const apiBase = import.meta.env.VITE_API_URL;
 
@@ -16,9 +17,7 @@ export const registerUserApi = async (
 
   const response = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: noroffHeaders({ json: true }),
     body: JSON.stringify(user),
   });
 
@@ -42,16 +41,14 @@ export const loginUserApi = async (
 
   const response = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: noroffHeaders({ json: true }),
     body: JSON.stringify(user),
   });
 
   if (!response.ok) {
     const message = await messageFromFailedResponse(
       response,
-      `Failed to register user: (${response.status}). Check your email and password.`,
+      `Failed to log in (${response.status}). Check your email and password.`,
     );
     throw new Error(message);
   }

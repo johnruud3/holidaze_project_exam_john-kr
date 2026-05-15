@@ -46,6 +46,7 @@ export type LoginResponse = {
     avatar?: { url: string; alt?: string };
     banner?: { url: string; alt?: string };
     accessToken: string;
+    venueManager?: boolean;
   };
   meta: Record<string, unknown>;
 };
